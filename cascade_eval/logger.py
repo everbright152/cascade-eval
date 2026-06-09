@@ -49,6 +49,17 @@ def read_jsonl(path: Path, model: type[BaseModel]) -> list[BaseModel]:
     return records
 
 
+class NullLogger:
+    """No-op logger. Used for degraded re-runs in the robustness slice, whose
+    engine/routing records would otherwise pollute the clean run's provenance."""
+
+    def engine_result(self, rec) -> None: ...
+    def routing(self, rec) -> None: ...
+    def discard(self, rec) -> None: ...
+    def absence(self, rec) -> None: ...
+    def close(self) -> None: ...
+
+
 class CascadeLogger:
     """Bundles the four provenance streams the harness emits each run.
 

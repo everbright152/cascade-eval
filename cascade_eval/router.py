@@ -63,6 +63,9 @@ class Router:
         self.delta = r.get("delta_dict", 0.40)
         self.low_resource = set(r.get("low_resource_scripts", []))
         self.wordlists_dir = config.get("paths", {}).get("wordlists", "data/wordlists")
+        # Candidates from the most recent route() call — lets the pipeline score
+        # every engine without re-running them.
+        self.last_candidates: list[Candidate] = []
 
     # --- helpers ------------------------------------------------------------
 
@@ -158,6 +161,7 @@ class Router:
             else:
                 reason = "no candidate produced a computable quality proxy"
 
+        self.last_candidates = candidates
         return self._finalize(candidates, winner, page, script, has_ground_truth, reason)
 
     # --- finalize: write all provenance records -----------------------------
