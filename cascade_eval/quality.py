@@ -24,7 +24,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from .schemas import EngineResult
-from .script_detect import detect_script
+from .script_detect import detect_script, resolve_block
 
 _TOKEN_RE = re.compile(r"\w+", re.UNICODE)
 
@@ -90,7 +90,7 @@ def script_consistency(text: str, expected_script: str) -> float | None:
     profile = detect_script(text)
     if profile.script_char_total == 0:
         return None
-    return profile.proportion(expected_script)
+    return profile.proportion(resolve_block(expected_script))
 
 
 def assess(

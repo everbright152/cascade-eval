@@ -30,6 +30,17 @@ _SCRIPT_RANGES: list[tuple[str, bool, list[tuple[int, int]]]] = [
 
 _RTL_SCRIPTS = {name for name, rtl, _ in _SCRIPT_RANGES if rtl}
 
+# Some language labels are written in another script's Unicode block. Jawi
+# (Malay) uses the Arabic block, so when measuring script-consistency for a
+# page labeled "Jawi" we compare against the Arabic block, while keeping "Jawi"
+# as the reporting/grouping label so it stays distinct from Arabic in metrics.
+_BLOCK_ALIAS = {"Jawi": "Arabic"}
+
+
+def resolve_block(label: str) -> str:
+    """Map a language/script label to the Unicode-block name used to measure it."""
+    return _BLOCK_ALIAS.get(label, label)
+
 
 def char_script(ch: str) -> str | None:
     """Return the script name for a single character, or None for
@@ -77,4 +88,4 @@ def detect_script(text: str) -> ScriptProfile:
 
 
 def is_rtl(script: str) -> bool:
-    return script in _RTL_SCRIPTS
+    return resolve_block(script) in _RTL_SCRIPTS

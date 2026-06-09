@@ -47,5 +47,8 @@ Thumbs.db
 # --- Local-only working files ---
 PLAN.md
 
+# Original drop folder — reorganized into data/images/ (the tracked corpus)
+OCR_Images/
+
 # --- Tracked on purpose (documentation & corpus) ---
 # README.md, RATIONALE.md, data/ are NOT ignored.
