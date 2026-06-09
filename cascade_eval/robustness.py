@@ -51,7 +51,10 @@ def _flag_silent_failure(
         return None, "not scored (no ground truth) — use reference-free proxy instead"
     cc, dc = _conf(clean), _conf(degraded)
     if dc is None or cc is None:
-        return None, "no confidence signal (e.g. vision-LLM) — undetectable via confidence"
+        return None, (
+            "no confidence signal for this run — undetectable via confidence "
+            "(always true for the vision-LLM; also when an engine returns no confident tokens)"
+        )
     delta_cer = degraded.cer - clean.cer
     delta_conf = dc - cc
     if delta_cer >= cer_jump and delta_conf >= -conf_tol:
