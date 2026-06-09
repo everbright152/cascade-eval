@@ -1,0 +1,42 @@
+# ---------------------------------------------------------------------------
+# cascade-eval configuration
+# Every routing threshold is explicit here, not buried in code. The router
+# logs which of these values drove each decision, so the policy stays legible.
+# ---------------------------------------------------------------------------
+
+paths:
+  images: data/images
+  ground_truth: data/ground_truth
+  manifest: data/manifest.csv
+  provenance: data/provenance.json
+  results: results
+
+engines:
+  tesseract:
+    enabled: true
+  easyocr:
+    enabled: true
+  vision_llm:
+    enabled: true          # auto-skips (and logs) if no ANTHROPIC_API_KEY
+    model: claude-opus-4-8
+
+# Routing thresholds (referenced by name in routing_log.jsonl).
+routing:
+  tau_high: 0.85           # accept a candidate outright at/above this confidence
+  tau_min: 0.50            # below this, a candidate cannot win -> may trigger absence
+  delta_dict: 0.40         # min dictionary hit-rate to trust a high-confidence result
+  # Scripts considered low-resource -> eligible for the LLM fallback branch.
+  low_resource_scripts: [Coptic, Jawi, Arabic]
+
+# Robustness slice: perturbations applied to a subset of GT pages.
+robustness:
+  subset_size: 5
+  perturbations:
+    blur: { kernel: 5 }          # Gaussian blur kernel size
+    skew: { degrees: 7 }         # rotation angle
+    lowres: { scale: 0.5 }       # downscale factor (then upscale back)
+
+quality:
+  # Reference-free proxies used when ground truth is absent.
+  use_dictionary: true
+  use_perplexity: false          # stretch goal; off by default

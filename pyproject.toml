@@ -1,0 +1,40 @@
+[project]
+name = "cascade-eval"
+version = "0.1.0"
+description = "A harness for finding where multilingual OCR/HTR cascades silently fail"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "phil1px", email = "enjoy.sudo@gmail.com" }]
+
+dependencies = [
+    "pytesseract>=0.3.10",   # Tesseract wrapper — baseline engine, per-word confidence
+    "easyocr>=1.7.1",        # deep-learning engine — contrasting failure modes
+    "jiwer>=3.0.0",          # CER/WER computation
+    "opencv-python>=4.9.0",  # preprocessing + perturbations (blur/skew/downscale)
+    "Pillow>=10.0.0",        # image IO
+    "pydantic>=2.6.0",       # schema-validated log records
+    "pandas>=2.2.0",         # metric aggregation / tables
+    "matplotlib>=3.8.0",     # confidence-vs-CER + robustness figures
+    "PyYAML>=6.0",           # config.yaml
+]
+
+[project.optional-dependencies]
+# Optional vision-LLM fallback for low-resource / handwritten pages.
+# The harness degrades gracefully (skips + logs) if this isn't installed or no key is set.
+llm = ["anthropic>=0.40.0"]
+dev = ["pytest>=8.0", "ruff>=0.4.0"]
+
+[project.scripts]
+cascade-eval = "cascade_eval.run:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["cascade_eval"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
