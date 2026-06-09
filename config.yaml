@@ -9,6 +9,7 @@ paths:
   ground_truth: data/ground_truth
   manifest: data/manifest.csv
   provenance: data/provenance.json
+  wordlists: data/wordlists        # per-language wordlists for dictionary-hit proxy
   results: results
 
 engines:
